@@ -1,0 +1,163 @@
+#include <wiringPi.h>
+#include <softPwm.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdint.h>
+#include <time.h>
+#include <signal.h>
+
+#define PWM_PIN 16
+#define INT_PIN 15
+#define MOTOR   0
+#define CH1     1   // Tomatenhaus
+#define CH2     2   // Terasse
+#define CH3     3   // Kraeuterschnecke
+#define CH4     4   // Hof 
+#define CH5     5   // Fruehbeetkaesten
+#define CH6     6   // nc
+
+#define CHMIN   1
+#define CHMAX   6
+
+#define FLOW1 150
+#define FLOW2 200
+#define FLOW3 140
+#define FLOW4 180
+#define FLOW5 250
+#define FLOW6 500
+
+#define WATER_MIN 0.01
+#define WATER_MAX 20.0
+
+#define BUF   255
+
+#define DEBUG 1
+
+void aufraeumen()
+{
+  digitalWrite(MOTOR, LOW);
+  for(int i=0; i<8; i++)
+  {
+    digitalWrite(i, LOW);
+  }
+}
+
+
+/* Signalroutine zum Programmende */
+void sigfunc(int sig)
+{
+  if (sig != SIGINT) return;
+
+  #ifdef DEBUG
+  printf("Programmabbruch\n");
+  #endif
+  aufraeumen();
+}
+
+
+static volatile int counter=0;
+
+void interrupt_0(void)
+{
+   ++counter;
+}
+
+double getWassermenge()
+{
+   return counter/450.0;
+}
+
+int main(int argc, char *argv[])
+{
+  int pin, i, dir=0;
+  double fluss=0;
+  int calt=0;
+  int duty=0;
+  int input;
+  int kanal=-1;
+  double wMenge=-1.0;
+  double geflossenesWasser=-1.0;
+  time_t start, jetzt, ende, laufzeit;
+  char buffer[100];
+
+  /* Parameteranzahl prüfen */
+  if (argc<2) 
+  {
+    fprintf(stderr, "Programmaufruf mit %s <Kanal> <Liter>\n", argv[0]);
+    exit(1);
+  }
+
+  /* Wassermenge prüfen */
+  if(atof(argv[1])>=WATER_MIN && atof(argv[1])<=WATER_MAX)
+  {
+    wMenge=atof(argv[1]);
+  }
+  else
+  {
+    fprintf(stderr, "Wassermenge muss zwischen %.2lf und %.2lf liegen\n", WATER_MIN, WATER_MAX);
+    exit(1);
+  }
+
+  
+  if(wiringPiSetup()==-1) 
+  {
+    fprintf(stderr, "Fehler bei der Initialisierung der wiringPi Schnittstelle\n");
+    exit(1);
+  }
+
+
+
+  /* PINs initialisieren */  
+  for(pin=0; pin<8; pin++)
+  {
+    pinMode(pin, OUTPUT);
+    digitalWrite(pin, LOW);
+  }
+
+  /* PWM initialisieren */  
+  softPwmCreate(PWM_PIN, duty, 500);
+
+  /* ISR einrichten */
+  pinMode(INT_PIN, INPUT);
+  pullUpDnControl(INT_PIN, PUD_UP);
+  if(wiringPiISR(INT_PIN, INT_EDGE_RISING, interrupt_0) < 0 )
+  {
+    fprintf(stderr, "Fehler bei der Einrichtung der Interrupt Service Routine\n");
+    exit(1);
+  }
+
+  
+  /* Motor mit Strom versorgen */
+  digitalWrite(MOTOR, HIGH);
+
+  /* Kanal auf */
+  for(int i = 1; i<=5; i++) digitalWrite(i, HIGH);
+  digitalWrite(kanal, HIGH);
+
+  /* PWM ein */
+  softPwmWrite(PWM_PIN, FLOW6);
+
+  /* GIESSEN */
+//  time(&start);
+  #ifdef DEBUG
+//  strftime(buffer, 100, "Startzeit: %X", localtime(start);
+//  printf("Start: %s\n", buffer);
+  #endif
+  while(getWassermenge() <= wMenge)
+  {
+   // time(&jetzt);
+   // laufzeit 
+    printf("Kanal: %i noch %.2lf Liter zu giessen.\n", kanal, wMenge-getWassermenge());
+    delay(1000);
+  }
+//  time(&ende);
+
+
+  /* Aufraeumen */
+  digitalWrite(MOTOR, LOW);
+  for(int i = 1; i<=5; i++) digitalWrite(i, LOW);
+  
+  
+  printf("FERTIG! ;-)\n");
+  return EXIT_SUCCESS;
+}
