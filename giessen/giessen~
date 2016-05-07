@@ -1,38 +1,56 @@
 #!/bin/bash
 
 
-
 DOJOB=/usr/local/bin/dojob
 MAIL=/usr/bin/mail
 EMPFAENGER="bernhard.huber@bhct.de 01759907461@t-mobile-sms.de bernie@bwan.de ggnagel@hotmail.de"
 
 echo "Giesse Tomatenhaus\n";
 sleep 5; 
-$DOJOB -c1 -t 599 -f 500;
-logger "Tomatenhaus gegossen ";
-
-echo "Giesse Kaminholz\n";
-sleep 5; 
-$DOJOB -c4 -t 100 -f 500;
+$DOJOB -c1 -t 500;
 if [ $? -eq 2 ]; then
   echo "Kein Wasser mehr in der Tonne?" | mail -s "Giessanlagenfehler" $EMPFAENGER;
   exit 2;
 fi
-logger "Kaminholz gegossen ";
+logger "Tomatenhaus gegossen ";
 
-#echo "Giesse Erdbeeren\n";
-#sleep 5; 
-#$DOJOB -c3 -t60 -f 500;
-#logger "Erdbeeren gegossen ";
+echo "Beet rechts gießen\n";
+sleep 5; 
+$DOJOB -c4 -t 120;
+if [ $? -eq 2 ]; then
+  echo "Kein Wasser mehr in der Tonne?" | mail -s "Giessanlagenfehler" $EMPFAENGER;
+  exit 2;
+fi
+logger "Beet rechts gegossen ";
+
+echo "Giesse Rabatte\n";
+sleep 5; 
+$DOJOB -c3 -t120;
+if [ $? -eq 2 ]; then
+  echo "Kein Wasser mehr in der Tonne?" | mail -s "Giessanlagenfehler" $EMPFAENGER;
+  exit 2;
+fi
+logger "Rabatte gegossen ";
+
 
 echo "Giesse Kraeuterschnecke\n";
 sleep 5; 
-$DOJOB -c5 -t350 -f500;
+$DOJOB -c4 -t350;
 if [ $? -eq 2 ]; then
   echo "Kein Wasser mehr in der Tonne?" | mail -s "Giessanlagenfehler" $EMPFAENGER;
   exit 2;
 fi
 logger "Kraeuterschnecke gegossen ";
+
+echo "Beet links\n";
+sleep 5; 
+$DOJOB -c5 -t350;
+if [ $? -eq 2 ]; then
+  echo "Kein Wasser mehr in der Tonne?" | mail -s "Giessanlagenfehler" $EMPFAENGER;
+  exit 2;
+fi
+logger "Beet links gegossen ";
+
 
 logger "Alles gegossen";
 

@@ -54,5 +54,7 @@ logger "Beet links gegossen ";
 
 logger "Alles gegossen";
 
+$date=`date`;
+echo "Alles gegossen"  | mail -s "Giessprotokoll $date" bernie@bwan.de;
 exit 0;
 
