@@ -37,6 +37,7 @@ void sigfunc(int sig)
 void interrupt_0(void)
 {
    ++counter;
+   printf("Interrupt\n");
 }
 
 
@@ -47,6 +48,6 @@ double getWassermenge()
 
 void show_help(char* programmname)
 {
-	printf("\nProgrammaufruf mit %s -c <Kanal> -m <Wassermenge> | -t <Zeit>\n", programmname);
+	printf("\nProgrammaufruf mit %s -c <Kanal> -m <Wassermenge> | -t <Zeit> [-f <Fluss>]\n", programmname);
 	exit(1);
 }

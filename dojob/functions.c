@@ -37,6 +37,7 @@ void sigfunc(int sig)
 void interrupt_0(void)
 {
    ++counter;
+//   printf("Interrupt\n");
 }
 
 
