@@ -4,3 +4,5 @@ dojob mit Fehlerbehandlung versehen.
 giessen-skript für cron erstellt.
 
 0.3 Anpassungen für 2016, neue Kanalkonfiguration
+
+0.3.1 giessen E-Mailbenachrichtigung mit $(date) versehen

@@ -9,7 +9,7 @@ echo "Giesse Tomatenhaus\n";
 sleep 5; 
 $DOJOB -c1 -t 500;
 if [ $? -eq 2 ]; then
-  echo "Kein Wasser mehr in der Tonne?" | mail -s "Giessanlagenfehler" $EMPFAENGER;
+  echo "Kein Wasser mehr in der Tonne?" | mail -s "Giessanlagenfehler $(date)" $EMPFAENGER;
   exit 2;
 fi
 logger "Tomatenhaus gegossen ";
@@ -18,7 +18,7 @@ echo "Beet rechts gießen\n";
 sleep 5; 
 $DOJOB -c4 -t 120;
 if [ $? -eq 2 ]; then
-  echo "Kein Wasser mehr in der Tonne?" | mail -s "Giessanlagenfehler" $EMPFAENGER;
+  echo "Kein Wasser mehr in der Tonne?" | mail -s "Giessanlagenfehler $(date)" $EMPFAENGER;
   exit 2;
 fi
 logger "Beet rechts gegossen ";
@@ -27,7 +27,7 @@ echo "Giesse Rabatte\n";
 sleep 5; 
 $DOJOB -c3 -t120;
 if [ $? -eq 2 ]; then
-  echo "Kein Wasser mehr in der Tonne?" | mail -s "Giessanlagenfehler" $EMPFAENGER;
+  echo "Kein Wasser mehr in der Tonne?" | mail -s "Giessanlagenfehler $(date)" $EMPFAENGER;
   exit 2;
 fi
 logger "Rabatte gegossen ";
@@ -37,7 +37,7 @@ echo "Giesse Kraeuterschnecke\n";
 sleep 5; 
 $DOJOB -c4 -t350;
 if [ $? -eq 2 ]; then
-  echo "Kein Wasser mehr in der Tonne?" | mail -s "Giessanlagenfehler" $EMPFAENGER;
+  echo "Kein Wasser mehr in der Tonne?" | mail -s "Giessanlagenfehler $(date)" $EMPFAENGER;
   exit 2;
 fi
 logger "Kraeuterschnecke gegossen ";
@@ -46,7 +46,7 @@ echo "Beet links\n";
 sleep 5; 
 $DOJOB -c5 -t350;
 if [ $? -eq 2 ]; then
-  echo "Kein Wasser mehr in der Tonne?" | mail -s "Giessanlagenfehler" $EMPFAENGER;
+  echo "Kein Wasser mehr in der Tonne?" | mail -s "Giessanlagenfehler $(date)" $EMPFAENGER;
   exit 2;
 fi
 logger "Beet links gegossen ";
@@ -54,7 +54,6 @@ logger "Beet links gegossen ";
 
 logger "Alles gegossen";
 
-$date=`date`;
-echo "Alles gegossen"  | mail -s "Giessprotokoll $date" bernie@bwan.de;
+echo "Alles gegossen"  | mail -s "Giessprotokoll $(date)" bernie@bwan.de;
 exit 0;
 
