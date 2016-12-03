@@ -16,7 +16,7 @@ logger "Tomatenhaus gegossen ";
 
 echo "Beet rechts gießen\n";
 sleep 5; 
-$DOJOB -c4 -t 120;
+$DOJOB -c2 -t 350;
 if [ $? -eq 2 ]; then
   echo "Kein Wasser mehr in der Tonne?" | mail -s "Giessanlagenfehler $(date)" $EMPFAENGER;
   exit 2;

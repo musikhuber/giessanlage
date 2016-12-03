@@ -1,5 +1,0 @@
-#!/bin/bash
-for i in *;
-do
-  mpg123 '$i';
-done;
